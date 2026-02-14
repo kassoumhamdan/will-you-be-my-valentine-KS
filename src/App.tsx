@@ -1,5 +1,7 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
+import confetti from "canvas-confetti";
 
 export default function Page() {
   const [noCount, setNoCount] = useState(0);
@@ -9,6 +11,31 @@ export default function Page() {
   const handleNoClick = () => {
     setNoCount(noCount + 1);
   };
+
+  const handleYesClick = () => {
+    setYesPressed(true);
+  };
+
+  // 🎆 Fireworks effect
+  useEffect(() => {
+    if (yesPressed) {
+      const duration = 3 * 1000;
+      const end = Date.now() + duration;
+
+      const interval = setInterval(() => {
+        if (Date.now() > end) {
+          clearInterval(interval);
+          return;
+        }
+
+        confetti({
+          particleCount: 60,
+          spread: 80,
+          origin: { y: 0.6 },
+        });
+      }, 250);
+    }
+  }, [yesPressed]);
 
   const getNoButtonText = () => {
     const phrases = [
@@ -34,23 +61,40 @@ export default function Page() {
   };
 
   return (
-    <div className="-mt-16 flex h-screen flex-col items-center justify-center px-4 text-center">
+    <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
       {yesPressed ? (
         <>
-          {/* GIF après avoir cliqué Yes */}
-          <img
-            className="h-[200px] md:h-[250px] rounded-xl shadow-lg"
-            src="https://gifdb.com/images/high/cute-love-bear-roses-ou7zho5oosxnpo6k.gif"
-            alt="Love gif"
-          />
+          {/* 🎬 Video responsive paysage */}
+          <div className="flex justify-center items-center w-full overflow-hidden">
+            <video
+              className="
+                max-h-[80vh]
+                w-auto
+                -rotate-90
+                rounded-2xl
+                shadow-2xl
+              "
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+            >
+              <source
+                src={`${import.meta.env.BASE_URL}love.mp4`}
+                type="video/mp4"
+              />
+            </video>
+          </div>
+
 
           <div className="my-6 text-2xl md:text-4xl font-bold">
-            WOOOOOO!!! I love you my baddy!! ;))
+            WOOOOOO!!! I love you my baddy ❤️
           </div>
         </>
       ) : (
         <>
-          {/* PHOTO avant le clic */}
+          {/* 📸 Photo responsive */}
           <img
             className="
               w-[85%]
@@ -73,7 +117,7 @@ export default function Page() {
             <button
               className="rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700 transition-all"
               style={{ fontSize: yesButtonSize }}
-              onClick={() => setYesPressed(true)}
+              onClick={handleYesClick}
             >
               Yes
             </button>
